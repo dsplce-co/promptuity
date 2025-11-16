@@ -1,11 +1,11 @@
 [package]
-name = "promptuity"
-version = "0.0.5"
-description = "Promptuity is a library that provides interactive prompts."
+name = "dsplce-co-promptuity"
+version = "0.0.5-supabase-plus-0.8"
+description = "This is a fork of https://crates.io/crates/promptuity, go to the original repository if you want to use as a dep"
 edition = "2021"
 license = "MIT"
 readme = "README.md"
-authors = ["wadackel <wadackel@gmail.com>"]
+authors = ["wadackel <wadackel@gmail.com>", "v1olen <przemek@dsplce.co>"]
 keywords = ["cli", "ask", "prompt", "interactive", "console"]
 categories = ["command-line-interface", "command-line-utilities"]
 repository = "https://github.com/wadackel/promptuity"
