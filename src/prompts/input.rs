@@ -65,6 +65,20 @@ pub struct Input {
     required: bool,
     validator: Option<Box<dyn Validator<String>>>,
     input: InputCursor,
+    transformer: Option<Box<dyn InputTransformer>>,
+}
+
+pub trait InputTransformer {
+    fn transform(&self, input: &str) -> String;
+}
+
+impl<F> InputTransformer for F
+where
+    F: Fn(&str) -> String,
+{
+    fn transform(&self, input: &str) -> String {
+        (self)(input)
+    }
 }
 
 impl Input {
@@ -78,7 +92,13 @@ impl Input {
             required: true,
             validator: None,
             input: InputCursor::default(),
+            transformer: None,
         }
+    }
+
+    pub fn with_transformer(&mut self, transformer: impl InputTransformer + 'static) -> &mut Self {
+        self.transformer = Some(Box::new(transformer));
+        self
     }
 
     /// Sets the formatter for the prompt.
@@ -136,6 +156,12 @@ impl Prompt for Input {
                 if self.input.is_empty() && self.required {
                     PromptState::Error(self.formatter.err_required())
                 } else {
+                    let final_value = self.transformer.as_ref().map_or_else(
+                        || self.input.value().to_string(),
+                        |transformer| transformer.transform(&self.input.value()),
+                    );
+
+                    self.input.set_value(final_value);
                     PromptState::Submit
                 }
             }
